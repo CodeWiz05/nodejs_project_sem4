@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JobSense - AI Job Matcher</title>
+    <!-- Using Pico.css for quick, clean styling - REMOVE IF YOU PREFER YOUR OWN CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@picocss/pico@2/css/pico.min.css"/>
+    <link rel="stylesheet" href="style.css"> <!-- Your custom styles (can override Pico or be standalone) -->
+</head>
+<body>
+    <main class="container">
+        <header style="text-align: center; margin-bottom: 2rem;">
+            <h1>JobSense</h1>
+            <p><em>AI-Powered Job Matching</em></p>
+        </header>
+
+        <section id="scraper-section" class="card">
+            <header>
+                <h2>Job Data Management</h2>
+            </header>
+            <button id="scrapeJobsBtn" aria-busy="false">Fetch/Update Jobs from RemoteOK API</button>
+            <p id="scrapeStatus" class="status-message"></p>
+        </section>
+
+        <section id="resume-section" class="card">
+            <header>
+                <h2>Step 1: Upload Your Resume (PDF)</h2>
+            </header>
+            <form id="resumeUploadForm">
+                <label for="resumeFile">Choose PDF file:</label>
+                <input type="file" id="resumeFile" name="resumeFile" accept=".pdf" required>
+                <button type="submit" id="uploadBtn" aria-busy="false">Upload & Process Resume</button>
+            </form>
+            <p id="resumeProcessStatus" class="status-message"></p>
+            <details id="parsedResumeDetails" style="display:none; margin-top: 1em;">
+                <summary>View Parsed Resume Text</summary>
+                <pre id="parsedResumeText"></pre>
+            </details>
+        </section>
+
+        <section id="matching-section" class="card" style="display:none;">
+             <header>
+                <h2>Step 2: Find Matching Jobs</h2>
+            </header>
+            <p>Based on your uploaded resume.</p>
+            <button id="matchJobsBtn" aria-busy="false">Match Jobs</button>
+            <p id="matchingStatus" class="status-message"></p>
+        </section>
+
+        <section id="results-section">
+            <h2>Matched Jobs</h2>
+            <div id="jobResults" class="grid">
+                <!-- Matched jobs will be appended here by script.js -->
+                <p class="placeholder-text">Upload a resume and click "Match Jobs" to see results.</p>
+            </div>
+        </section>
+    </main>
+
+    <script src="server.js"></script>
+</body>
+</html>
