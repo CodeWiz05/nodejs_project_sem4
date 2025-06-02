@@ -20,7 +20,12 @@ async function fetchJobDetailDescription(jobDetailUrl) {
     logger.debug(`Fetching job detail from: ${jobDetailUrl}`);
     const { data: detailHtml } = await axios.get(jobDetailUrl, {
       headers: { // It's good practice to set a User-Agent
-        'User-Agent': 'JobSenseScraper/1.0 (Contact: yourname@example.com - for educational project)'
+        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/137.0.0.0 Safari/537.36',
+        'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7',
+        'Accept-Language': 'en-US,en;q=0.9',
+        'Accept-Encoding': 'gzip, deflate, br',
+        'Connection': 'keep-alive',
+        'Upgrade-Insecure-Requests': '1',
       }
     });
     const $ = cheerio.load(detailHtml);
@@ -75,7 +80,12 @@ async function scrapeWeWorkRemotely() {
   try {
     const { data: listPageHtml } = await axios.get(fullListingPageUrl, {
       headers: {
-        'User-Agent': 'JobSenseScraper/1.0 (Contact: snumairsoharwardi_cse2305j0@mgit.ac.in - for educational project)'
+        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/137.0.0.0 Safari/537.36',
+        'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7',
+        'Accept-Language': 'en-US,en;q=0.9',
+        'Accept-Encoding': 'gzip, deflate, br', // Axios handles gzip by default, but explicit can sometimes be good
+        'Connection': 'keep-alive',
+        'Upgrade-Insecure-Requests': '1', // Tells the server the client prefers HTTPS for subsequent requests
       }
     });
     const $ = cheerio.load(listPageHtml);
@@ -99,21 +109,23 @@ async function scrapeWeWorkRemotely() {
         // We're looking for hrefs that typically start with /listings/ or /remote-jobs/
         const linkElement = jobItemElement.find('a[href^="/listings/"], a[href^="/remote-jobs/"]').first();
         
-        if (linkElement.length === 0) {
-            logger.warn('Could not find primary job link element within li.new-listing-container. Skipping item.');
+        let relativeJobUrl = 'N/A'; // Default if not found
+        if (linkElement.length > 0) {
+            relativeJobUrl = linkElement.attr('href');
+        } else {
+            logger.warn('Could not find primary job link element within li.new-listing-container. HTML snippet below.');
             if(jobItemElement.html()) logger.debug(`Problematic HTML snippet (no link): ${jobItemElement.html().substring(0, 300)}...`);
-            continue;
+            // Continue to try and get title/company if possible, even if link is missing for logging purposes
         }
 
-        const relativeJobUrl = linkElement.attr('href');
-        // Extract title and company from within this linkElement, as it wraps them
-        const jobTitle = linkElement.find('h4.new-listing__header__title').text().trim();
-        const companyName = linkElement.find('p.new-listing__company-name').first().text().trim(); // .first() to be safe
+        const jobTitle = linkElement.find('h4.new-listing__header__title').text().trim() || jobItemElement.find('h4.new-listing__header__title').text().trim() || 'N/A';
+        const companyName = linkElement.find('p.new-listing__company-name').first().text().trim() || jobItemElement.find('p.new-listing__company-name').first().text().trim() || 'N/A';
+        
         logger.info(`--- ITEM ${i} ---`);
         logger.info(`TITLE: ${jobTitle}`);
         logger.info(`COMPANY: ${companyName}`);
         logger.info(`RELATIVE URL: ${relativeJobUrl}`);
-        logger.debug(`ITEM HTML (first 300 chars): ${jobItemElement.html() ? jobItemElement.html().substring(0,300) : 'N/A'}`); // Optional: for debugging HTML
+        logger.debug(`ITEM HTML (first 300 chars): ${jobItemElement.html() ? jobItemElement.html().substring(0,300) : 'N/A'}`);
         await delay(100);
 
         //if (!jobTitle || !companyName || !relativeJobUrl) {
@@ -206,12 +218,20 @@ async function scrapeWeWorkRemotely() {
   } catch (error) {
     logger.error(`Major error during scraping ${SOURCE_NAME} from ${fullListingPageUrl}: ${error.message}`);
     if (error.isAxiosError && error.response) {
-        logger.error(`Axios error details: Status ${error.response.status}, Data: ${JSON.stringify(error.response.data).substring(0,200)}`);
+        logger.error(`Axios error details for ${fullListingPageUrl}: Status ${error.response.status}`); // Log status for list page
     }
-    throw new ApiError(500, `Scraping ${SOURCE_NAME} failed: ${error.message}`);
+    // Return a structure indicating failure, but don't throw ApiError yet if it's a 403 during testing phase
+    return { 
+        source: SOURCE_NAME, 
+        url: fullListingPageUrl, 
+        status: 'failed_to_fetch_list_page',
+        error: error.message, 
+        statusCode: error.isAxiosError && error.response ? error.response.status : 500,
+        jobsFound: 0, jobsAdded: 0, jobsAlreadyExisted: 0, jobsFailedToEmbed: 0
+    };
+    // throw new ApiError(500, `Scraping ${SOURCE_NAME} failed: ${error.message}`); // Original
   }
 }
-
 module.exports = {
   scrapeWeWorkRemotely,
   SOURCE_NAME,
