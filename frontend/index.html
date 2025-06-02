@@ -9,12 +9,19 @@
     <link rel="stylesheet" href="style.css"> <!-- Your custom styles (can override Pico or be standalone) -->
 </head>
 <body>
+    <!-- Add this button, for example, right after the opening <body> tag -->
+    <button id="theme-toggle" aria-label="Toggle theme" style="position: fixed; top: 1rem; right: 1rem; z-index: 1000;">🌙</button>
     <main class="container">
         <header style="text-align: center; margin-bottom: 2rem;">
             <h1>JobSense</h1>
             <p><em>AI-Powered Job Matching</em></p>
+            <!-- Place for automatic job fetch status -->
+            <p id="autoJobFetchStatus" class="status-message" style="font-size: 0.8em; min-height: 1.2em;">
+                <span class="spinner" style="display:none;"></span> <!-- Spinner placeholder -->
+                <span class="status-text"></span> <!-- Actual text message -->
+            </p>
         </header>
-
+    <!--
         <section id="scraper-section" class="card">
             <header>
                 <h2>Job Data Management</h2>
@@ -22,6 +29,7 @@
             <button id="scrapeJobsBtn" aria-busy="false">Fetch/Update Jobs from RemoteOK API</button>
             <p id="scrapeStatus" class="status-message"></p>
         </section>
+    -->
 
         <section id="resume-section" class="card">
             <header>

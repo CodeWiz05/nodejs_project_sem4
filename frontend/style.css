@@ -1,197 +1,286 @@
-/* General Body Styles (if not using a framework heavily) */
+/* General Body Styles */
 body {
     font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
     line-height: 1.6;
     margin: 0;
-    padding: 1rem; /* Use rem for responsive padding */
-    background-color: #f8f9fa; /* Lighter background */
-    color: #212529; /* Darker text for better contrast */
+    padding: 1rem;
+    background-color: #f8f9fa; /* Light gray background */
+    color: #212529; /* Default text color */
+    transition: background-color 0.3s, color 0.3s; /* For theme toggle */
 }
 
-/* Container for centering content */
 main.container {
-    max-width: 960px; /* Increased max-width for better layout on larger screens */
-    margin: 2rem auto; /* More margin around the container */
-    padding: 2rem; /* More padding inside the container */
-    background: #ffffff;
+    max-width: 960px;
+    margin: 2rem auto;
+    padding: 2rem;
+    background-color: #ffffff; /* White container background */
     border-radius: 8px;
-    box-shadow: 0 4px 6px rgba(0,0,0,0.1); /* Softer shadow */
+    box-shadow: 0 4px 12px rgba(0,0,0,0.08); /* Slightly softer shadow */
+    transition: background-color 0.3s, box-shadow 0.3s;
 }
+
+/* Theme Toggle Button */
+#theme-toggle {
+    position: fixed;
+    top: 1rem;
+    right: 1rem;
+    padding: 0.5rem 0.8rem;
+    z-index: 1000;
+    /* Pico might style buttons, or you can add custom style */
+}
+
 
 /* Headers */
-h1, h2 {
-    color: #343a40;
-    margin-bottom: 1rem; /* More consistent margin */
+h1, h2, h3 {
+    color: #343a40; /* Dark gray for headers */
+    margin-bottom: 1rem;
 }
 h1 {
-    font-size: 2.5rem; /* Larger H1 */
+    font-size: 2.25rem; /* Slightly adjusted */
+    text-align: center;
 }
-h2 {
-    font-size: 1.75rem; /* Slightly larger H2 */
-    border-bottom: 1px solid #dee2e6; /* Subtle underline for H2 */
-    padding-bottom: 0.5rem;
-}
-header p em { /* For the subtitle */
+main.container > header p em { /* Subtitle */
     color: #6c757d;
     font-size: 1.1rem;
+    display: block;
+    text-align: center;
+    margin-top: -0.5rem;
+    margin-bottom: 2rem;
+}
+section > header h2 { /* Section headers */
+    font-size: 1.5rem;
+    border-bottom: 1px solid #e9ecef;
+    padding-bottom: 0.5rem;
+    margin-bottom: 1.5rem; /* More space after section header */
 }
 
-/* Cards for sections (if not using Pico.css, or to override) */
-.card {
-    background-color: #fff;
-    border: 1px solid #e9ecef; /* Lighter border */
-    border-radius: 0.375rem; /* Standardized border radius */
+
+/* Card styling (Pico uses <article> for cards, we can target that or a .card class) */
+section.card, article.job-card-custom { /* Use a custom class for job cards to avoid conflict with Pico's article */
+    background-color: #ffffff; /* Ensure light background for cards */
+    color: #212529; /* Ensure light theme text color for cards */
+    border: 1px solid #e0e0e0;
+    border-radius: 0.5rem;
     padding: 1.5rem;
-    margin-bottom: 2rem; /* More space between sections */
-    box-shadow: 0 2px 4px rgba(0,0,0,0.05); /* Subtle shadow for cards */
+    margin-bottom: 1.5rem; /* Space between sections/cards */
+    box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+    transition: background-color 0.3s, border-color 0.3s, box-shadow 0.3s;
 }
-.card header {
+section.card > header { /* Header within a card section */
     margin-bottom: 1rem;
     padding-bottom: 0.75rem;
     border-bottom: 1px solid #e9ecef;
 }
-.card header h2 {
-    border-bottom: none; /* Remove double border if H2 already has one */
+section.card > header h2 {
+    border-bottom: none; 
     margin-bottom: 0;
 }
 
 
-/* Form elements: Input and Button styling (if not using Pico.css) */
-input[type="file"],
-input[type="number"],
-button,
+/* Form Elements */
+form label {
+    display: block;
+    margin-bottom: 0.25rem;
+    font-weight: 500; /* Slightly bolder labels */
+}
+input[type="file"], button {
+    margin-top: 0.25rem; /* Reduced top margin */
+}
+/* Pico styles buttons well, but if you need to override: */
+/* button { background-color: #007bff; color: white; ... } */
+
+
+/* Parsed Resume Details */
 details {
-    margin-top: 0.5rem;
-    margin-bottom: 1rem;
-}
-
-/* If not using Pico, you might need more specific button styles */
-/* button {
-    background-color: #007bff;
-    color: white;
-    padding: 0.75rem 1.5rem;
-    border: none;
-    border-radius: 0.25rem;
-    cursor: pointer;
-    font-size: 1rem;
-    transition: background-color 0.2s ease-in-out;
-}
-button:hover {
-    background-color: #0056b3;
-}
-button:disabled {
-    background-color: #6c757d;
-    cursor: not-allowed;
-} */
-
-
-/* Preformatted text for parsed resume */
-pre {
-    background-color: #f8f9fa; /* Lighter background for pre */
-    padding: 1rem;
-    border: 1px solid #dee2e6; /* Lighter border */
-    border-radius: 0.25rem;
-    white-space: pre-wrap;
-    word-wrap: break-word;
-    max-height: 250px; /* Slightly increased height */
-    overflow-y: auto;
-    font-family: 'Courier New', Courier, monospace; /* Monospace font */
-    font-size: 0.9rem;
+    margin-top: 1rem;
+    background-color: #f8f9fa; /* Light bg for details */
+    border: 1px solid #e9ecef;
+    border-radius: 0.375rem;
+    padding: 0.5rem 1rem; /* Add some padding to details itself */
 }
 details summary {
+    font-weight: 500;
+    color: #495057;
     cursor: pointer;
-    font-weight: bold;
+    padding: 0.5rem 0;
 }
-
-/* Job results styling */
-#jobResults {
-    display: grid; /* Use CSS Grid for layout */
-    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); /* Responsive columns */
-    grid-gap: 1.5rem; /* Gap between cards */
-    margin-top: 1.5rem;
-}
-
-#jobResults article { /* This targets the job cards if you used <article> */
-    border: 1px solid #d1d5db; /* Lighter border */
-    border-radius: 0.5rem;    /* Rounded corners */
-    padding: 1.5rem;
-    background-color: #ffffff; /* White background for cards */
-    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06); /* Nice shadow */
-    display: flex; /* Use flexbox for internal layout */
-    flex-direction: column; /* Stack content vertically */
-    justify-content: space-between; /* Pushes footer to bottom */
-}
-
-#jobResults article header h3 {
-    font-size: 1.25rem; /* Slightly larger title */
-    color: #1f2937;   /* Darker title color */
-    margin-bottom: 0.5rem;
-}
-
-#jobResults article p {
-    font-size: 0.9rem;
-    color: #4b5563; /* Softer text color */
-    margin-bottom: 0.5rem; /* Consistent paragraph spacing */
-}
-
-#jobResults article p strong {
-    color: #374151; /* Slightly darker strong text */
-}
-
-#jobResults article mark { /* For similarity score */
-    background-color: #d1fae5; /* Light green background */
-    color: #067647;      /* Dark green text */
-    padding: 0.2em 0.4em;
-    border-radius: 0.25rem;
-    font-weight: bold;
-}
-
-#jobResults article footer {
-    margin-top: 1rem; /* Space above the footer */
-    border-top: 1px solid #e5e7eb; /* Separator line */
-    padding-top: 1rem;
-}
-
-#jobResults article footer a[role="button"] {
-    /* Pico styles this, but you can override */
-    /* Example: make it smaller if needed */
-    /* padding: 0.5rem 1rem; */
-    /* font-size: 0.9rem; */
-}
-
-
-#jobResults article details {
-    margin-top: 0.75rem;
-}
-
-#jobResults article details summary {
-    font-size: 0.85rem;
-    color: #6b7280; /* Muted color for summary */
-    cursor: pointer;
-    padding: 0.25rem 0; /* Add some padding for easier clicking */
-}
-
-#jobResults article details p { /* Description snippet */
-    font-size: 0.8rem;
-    color: #374151;
-    background-color: #f3f4f6; /* Very light gray for snippet bg */
-    padding: 0.75rem;
-    border-radius: 0.25rem;
+details pre {
     margin-top: 0.5rem;
-    border-left: 3px solid #9ca3af; /* Accent border */
+    background-color: #e9ecef; /* Slightly darker bg for pre within details */
+    padding: 0.75rem;
+    border: none; /* Remove border if details already has one */
+    border-radius: 0.25rem;
+    max-height: 200px;
+    overflow-y: auto;
+    font-size: 0.875rem;
+}
+
+
+/* Job Results Grid and Cards */
+#jobResults {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); /* Min card width */
+    gap: 1.5rem;
+    margin-top: 1rem;
+}
+
+/* Use a more specific class for job cards to avoid Pico's article styling if it conflicts */
+.job-card-custom { 
+    /* Shared styles with section.card are already applied if you use both classes */
+    /* e.g., <article class="card job-card-custom"> */
+}
+
+.job-card-custom header h3 {
+    font-size: 1.15rem; /* Job title size */
+    color: #0056b3;    /* Primary blue for title */
+    margin-bottom: 0.3rem;
+}
+
+.job-card-custom p {
+    font-size: 0.9rem;
+    color: #495057;
+    margin-bottom: 0.4rem;
+    line-height: 1.5;
+}
+.job-card-custom p strong {
+    color: #343a40;
+}
+
+.job-card-custom mark { /* Similarity score */
+    background-color: #cce5ff; /* Light blue background */
+    color: #004085;      /* Dark blue text */
+    padding: 0.2em 0.45em;
+    border-radius: 0.25rem;
+    font-size: 0.9em;
+}
+
+.job-card-custom footer {
+    margin-top: auto; /* Pushes footer to bottom of flex card */
+    padding-top: 1rem;
+    border-top: 1px solid #e9ecef;
+    text-align: right; /* Align button to the right */
+}
+.job-card-custom footer a[role="button"] {
+    /* Pico styles this by default. Can customize if needed. */
+    /* Example: background-color: #28a745; color: white; */
+}
+
+.job-card-custom details summary {
+    font-size: 0.8rem;
+    color: #6c757d;
+}
+.job-card-custom details p { /* Description snippet */
+    font-size: 0.8rem;
+    background-color: #f8f9fa;
+    border-left: 3px solid #007bff; /* Blue accent for snippet */
 }
 
 
 /* Status Messages */
 .status-message {
     font-style: italic;
-    color: #6c757d; /* Muted color for status */
-    margin-top: 0.5rem;
+    color: #6c757d;
+    margin-top: 0.75rem;
     font-size: 0.9rem;
-    min-height: 1.2em; /* Reserve space to prevent layout jumps */
+    min-height: 1.2em; 
+    white-space: pre-wrap; /* To respect newlines from JS status */
 }
 .placeholder-text {
     color: #6c757d;
     text-align: center;
     padding: 2rem;
+    font-style: italic;
 }
+
+/* --- Dark Mode Styles --- */
+body[data-theme="dark"] {
+    background-color: #121212; /* Very dark gray, almost black */
+    color: #e0e0e0; /* Light gray text */
+}
+
+body[data-theme="dark"] main.container {
+    background-color: #1e1e1e; /* Dark gray for container */
+    box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+}
+
+body[data-theme="dark"] h1, 
+body[data-theme="dark"] h2, 
+body[data-theme="dark"] h3 {
+    color: #f5f5f5; /* Lighter headers for dark mode */
+}
+body[data-theme="dark"] main.container > header p em {
+    color: #adb5bd;
+}
+body[data-theme="dark"] section > header h2 {
+    border-bottom-color: #343a40;
+}
+
+
+body[data-theme="dark"] section.card,
+body[data-theme="dark"] article.job-card-custom {
+    background-color: #2a2a2a; /* Darker card background */
+    color: #d0d0d0;
+    border-color: #444;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+}
+body[data-theme="dark"] section.card > header {
+    border-bottom-color: #444;
+}
+
+body[data-theme="dark"] details {
+    background-color: #333;
+    border-color: #555;
+}
+body[data-theme="dark"] details summary {
+    color: #bbb;
+}
+body[data-theme="dark"] details pre {
+    background-color: #2c2c2c;
+    color: #ccc;
+}
+
+
+body[data-theme="dark"] .job-card-custom header h3 {
+    color: #87cefa; /* Light sky blue for titles in dark mode */
+}
+body[data-theme="dark"] .job-card-custom p {
+    color: #b0b0b0;
+}
+body[data-theme="dark"] .job-card-custom p strong {
+    color: #e0e0e0;
+}
+body[data-theme="dark"] .job-card-custom mark {
+    background-color: #004d40; /* Dark teal background */
+    color: #b2dfdb;      /* Light teal text */
+}
+body[data-theme="dark"] .job-card-custom footer {
+    border-top-color: #444;
+}
+body[data-theme="dark"] .job-card-custom details summary {
+    color: #999;
+}
+body[data-theme="dark"] .job-card-custom details p {
+    background-color: #333;
+    border-left-color: #87cefa;
+    color: #ccc;
+}
+
+body[data-theme="dark"] .status-message,
+body[data-theme="dark"] .placeholder-text {
+    color: #adb5bd;
+}
+
+.status-message .spinner {
+    display: inline-block;
+    width: 1em;
+    height: 1em;
+    border: 2px solid rgba(0,0,0,.1);
+    border-radius: 50%;
+    border-left-color: #09f; /* Pico blue or your theme color */
+    animation: spin 1s ease infinite;
+    margin-right: 0.5em;
+    vertical-align: middle; /* Align with text */
+}
+
+@keyframes spin {
+    to { transform: rotate(360deg); }
