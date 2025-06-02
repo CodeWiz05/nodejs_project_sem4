@@ -1,0 +1,40 @@
+# Node.js specific
+node-backend/node_modules/
+node-backend/.env
+node-backend/.env.*.local
+node-backend/npm-debug.log*
+node-backend/yarn-debug.log*
+node-backend/yarn-error.log*
+node-backend/logs/
+node-backend/*.log
+node-backend/coverage/
+node-backend/build/
+node-backend/dist/
+
+# Python specific
+embedding-service/venv/
+embedding-service/.venv/
+embedding-service/__pycache__/
+embedding-service/*.pyc
+embedding-service/*.pyo
+embedding-service/.env
+embedding-service/.pytest_cache/
+embedding-service/.mypy_cache/
+embedding-service/.hypothesis/
+embedding-service/celerybeat-schedule
+embedding-service/instance/
+embedding-service/docs/_build/
+
+# IDE/Editor specific
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS specific
+.DS_Store
+Thumbs.db
+
+# Optional: Docker
+docker-compose.override.yml
