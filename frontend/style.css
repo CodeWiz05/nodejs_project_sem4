@@ -19,6 +19,41 @@ main.container {
     transition: background-color 0.3s, box-shadow 0.3s;
 }
 
+
+.status-message .spinner[style*="display:none"] { /* If JS sets display:none */
+    /* If we want it to still occupy space when hidden by JS: */
+    /* visibility: hidden; display: inline-block !important; */
+}
+
+/* --- REVISED STYLES FOR AUTO JOB FETCH STATUS --- */
+main.container > header #autoJobFetchStatus {
+    display: flex;            /* USE FLEXBOX */
+    justify-content: center;  /* Center children horizontally */
+    align-items: center;      /* Center children vertically (if they have different heights) */
+    font-size: 0.9em;         /* Your desired font size */
+    min-height: 1.2em;        /* To prevent layout jump when text changes */
+    color: #6c757d;          /* Your status message color */
+    margin-top: 0.75rem;      /* Keep your margin */
+    /* text-align: center; /* No longer strictly needed if using flex for centering children */
+    /* margin-left: auto; /* Not needed if parent header is already text-align:center and p is block or flex */
+    /* margin-right: auto; /* Not needed */
+}
+
+.status-message .spinner {
+    /* display: inline-block; /* Flex item takes care of display */
+    width: 1em;
+    height: 1em;
+    border: 2px solid rgba(0,0,0,.1); /* Light border for the circle */
+    border-left-color: #09f;          /* Active part of the spinner (Pico blue) */
+    border-radius: 50%;
+    animation: spin 1s linear infinite; /* Changed to linear for smoother spin */
+    margin-right: 0.5em;                /* Space between spinner and text */
+    /* vertical-align: middle; /* Not needed with align-items: center */
+}
+.status-message .status-text {
+    /*display: inline; /* Default for span, should be fine */ 
+    /*vertical-align: middle; */
+}
 /* Theme Toggle Button */
 #theme-toggle {
     position: fixed;
@@ -119,7 +154,7 @@ details pre {
 /* Job Results Grid and Cards */
 #jobResults {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); /* Min card width */
+    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
     gap: 1.5rem;
     margin-top: 1rem;
 }
@@ -176,6 +211,12 @@ details pre {
 }
 
 
+article.job-card-custom { /* Or #jobResults article */
+    /* ... other styles ... */
+    display: flex; 
+    flex-direction: column; 
+    justify-content: space-between; 
+}
 /* Status Messages */
 .status-message {
     font-style: italic;
@@ -222,6 +263,9 @@ body[data-theme="dark"] article.job-card-custom {
     color: #d0d0d0;
     border-color: #444;
     box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+    display: flex; 
+    flex-direction: column; 
+    justify-content: space-between; 
 }
 body[data-theme="dark"] section.card > header {
     border-bottom-color: #444;
@@ -284,3 +328,5 @@ body[data-theme="dark"] .placeholder-text {
 
 @keyframes spin {
     to { transform: rotate(360deg); }
+
+}
