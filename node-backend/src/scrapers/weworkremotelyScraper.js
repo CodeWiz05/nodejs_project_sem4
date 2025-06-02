@@ -109,84 +109,91 @@ async function scrapeWeWorkRemotely() {
         // Extract title and company from within this linkElement, as it wraps them
         const jobTitle = linkElement.find('h4.new-listing__header__title').text().trim();
         const companyName = linkElement.find('p.new-listing__company-name').first().text().trim(); // .first() to be safe
+        logger.info(`--- ITEM ${i} ---`);
+        logger.info(`TITLE: ${jobTitle}`);
+        logger.info(`COMPANY: ${companyName}`);
+        logger.info(`RELATIVE URL: ${relativeJobUrl}`);
+        logger.debug(`ITEM HTML (first 300 chars): ${jobItemElement.html() ? jobItemElement.html().substring(0,300) : 'N/A'}`); // Optional: for debugging HTML
+        await delay(100);
 
-        if (!jobTitle || !companyName || !relativeJobUrl) {
-            logger.warn(`Skipping a listing from WWR due to missing title, company, or relative URL. Title: '${jobTitle}', Company: '${companyName}', RelURL: '${relativeJobUrl}'`);
-            if(jobItemElement.html()) logger.debug(`Problematic HTML snippet (missing data): ${jobItemElement.html().substring(0, 300)}...`);
-            continue;
-        }
+        //if (!jobTitle || !companyName || !relativeJobUrl) {
+           // logger.warn(`Skipping a listing from WWR due to missing title, company, or relative URL. Title: '${jobTitle}', Company: '${companyName}', RelURL: '${relativeJobUrl}'`);
+            //if(jobItemElement.html()) logger.debug(`Problematic HTML snippet (missing data): ${jobItemElement.html().substring(0, 300)}...`);
+            //continue;
+        //}
         
-        const fullJobDetailUrl = `${BASE_URL}${relativeJobUrl}`;
+        //const fullJobDetailUrl = `${BASE_URL}${relativeJobUrl}`;
 
-        const existingJob = await Job.findOne({ url: fullJobDetailUrl });
-        if (existingJob) {
-          logger.debug(`Job from ${SOURCE_NAME} already exists in DB, skipping: ${fullJobDetailUrl}`);
-          jobsAlreadyExisted++;
-          continue;
-        }
+        //const existingJob = await Job.findOne({ url: fullJobDetailUrl });
+        //if (existingJob) {
+          //logger.debug(`Job from ${SOURCE_NAME} already exists in DB, skipping: ${fullJobDetailUrl}`);
+          //jobsAlreadyExisted++;
+          //continue;
+        //}
 
         // Fetch full description from detail page
-        const { html: descriptionHtml, text: descriptionText } = await fetchJobDetailDescription(fullJobDetailUrl);
+        //const { html: descriptionHtml, text: descriptionText } = await fetchJobDetailDescription(fullJobDetailUrl);
         
         // Polite delay *after* fetching the detail page, before the next detail page fetch or DB operations
-        if (i < jobElements.length - 1) { // Avoid delay after the very last item
-            await delay(1500 + Math.floor(Math.random() * 1000)); // 1.5 to 2.5 seconds
-        }
+        //if (i < jobElements.length - 1) { // Avoid delay after the very last item
+          //  await delay(1500 + Math.floor(Math.random() * 1000)); // 1.5 to 2.5 seconds
+        //}
 
-        if (!descriptionText && !descriptionHtml) {
-            logger.warn(`No description found for ${fullJobDetailUrl} after fetching detail page. This job may not be suitable or complete. Skipping.`);
-            continue;
-        }
+        //if (!descriptionText && !descriptionHtml) {
+          //  logger.warn(`No description found for ${fullJobDetailUrl} after fetching detail page. This job may not be suitable or complete. Skipping.`);
+            //continue;
+        //}
         
-        const categories = [];
+        //const categories = [];
         // Categories are within the same linkElement context on the listing page
-        linkElement.find('div.new-listing__categories p.new-listing__categories__category').each((idx, tagEl) => {
-            const tagText = $(tagEl).text().trim();
-            if (tagText) categories.push(tagText);
-        });
+        //linkElement.find('div.new-listing__categories p.new-listing__categories__category').each((idx, tagEl) => {
+            //const tagText = $(tagEl).text().trim();
+            //if (tagText) categories.push(tagText);
+        //});
         
-        let location = 'Remote'; // WWR is all remote
-        const companyHeadquarters = linkElement.find('p.new-listing__company-headquarters').text().trim();
+        //let location = 'Remote'; // WWR is all remote
+        //const companyHeadquarters = linkElement.find('p.new-listing__company-headquarters').text().trim();
         // You might decide to use companyHeadquarters as location if specific remote region tags aren't present
-        const regionTag = categories.find(c => c.match(/(europe|americas|asia|africa|canada|usa)/i));
-        if (regionTag) {
-            location = regionTag;
-        } else if (companyHeadquarters) {
-            location = companyHeadquarters; // Or keep 'Remote' if HQ isn't relevant
-        }
+        //const regionTag = categories.find(c => c.match(/(europe|americas|asia|africa|canada|usa)/i));
+        //if (regionTag) {
+          //  location = regionTag;
+        //} else if (companyHeadquarters) {
+          //  location = companyHeadquarters; // Or keep 'Remote' if HQ isn't relevant
+        //}
 
 
-        const textToEmbed = `${jobTitle} ${descriptionText || ''}`; // Ensure descriptionText is not null/undefined
-        let jobEmbedding = [];
-        if (textToEmbed.trim().length > jobTitle.trim().length + 5) { // Only embed if description adds meaningful content
-            try {
-                jobEmbedding = await embeddingClient.getEmbedding(textToEmbed);
-            } catch (embeddingError) {
-                logger.error(`Failed to get embedding for job "${jobTitle}" @ ${fullJobDetailUrl}. Error: ${embeddingError.message}`);
-                jobsFailedToEmbed++;
-            }
-        } else {
-            logger.warn(`Skipping embedding for job "${jobTitle}" @ ${fullJobDetailUrl} due to very short/missing description text.`);
-        }
+        //const textToEmbed = `${jobTitle} ${descriptionText || ''}`; // Ensure descriptionText is not null/undefined
+        //let jobEmbedding = [];
+        //if (textToEmbed.trim().length > jobTitle.trim().length + 5) { // Only embed if description adds meaningful content
+          //  try {
+            //    jobEmbedding = await embeddingClient.getEmbedding(textToEmbed);
+            //} catch (embeddingError) {
+              //  logger.error(`Failed to get embedding for job "${jobTitle}" @ ${fullJobDetailUrl}. Error: ${embeddingError.message}`);
+              //  jobsFailedToEmbed++;
+            //}
+        //} else {
+          //  logger.warn(`Skipping embedding for job "${jobTitle}" @ ${fullJobDetailUrl} due to very short/missing description text.`);
+        //}
         
 
-        const newJob = new Job({
-          title: jobTitle,
-          company: companyName,
-          location: location,
-          description: descriptionHtml, // HTML from detail page
-          parsedDescription: descriptionText, // Plain text from detail page
-          url: fullJobDetailUrl,
-          source: SOURCE_NAME,
-          isRemote: true,
-          tags: categories.filter(c => c.toLowerCase() !== location.toLowerCase()),
-          embedding: jobEmbedding.length > 0 ? jobEmbedding : undefined,
+        //const newJob = new Job({
+          //title: jobTitle,
+          //company: companyName,
+          //location: location,
+          //description: descriptionHtml, // HTML from detail page
+          //parsedDescription: descriptionText, // Plain text from detail page
+          //url: fullJobDetailUrl,
+          //source: SOURCE_NAME,
+          //isRemote: true,
+          //tags: categories.filter(c => c.toLowerCase() !== location.toLowerCase()),
+          //embedding: jobEmbedding.length > 0 ? jobEmbedding : undefined,
           // postedDate: // TODO: Parse from e.g., "1d ago", "New" which is in <p class="new-listing__header__icons__date">
-        });
+        //});
 
-        await newJob.save();
-        jobsAdded++;
-        logger.info(`Added job: "${jobTitle}" by ${companyName} from ${SOURCE_NAME}`);
+        //await newJob.save();
+        //jobsAdded++;
+        //logger.info(`Added job: "${jobTitle}" by ${companyName} from ${SOURCE_NAME}`);
+
 
       } catch (jobError) {
         logger.error(`Error processing one WWR job item: ${jobError.message}`, { stack: jobError.stack, itemHtml: jobItemElement.html() ? jobItemElement.html().substring(0,300) : 'N/A' });

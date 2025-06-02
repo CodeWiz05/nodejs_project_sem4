@@ -40,8 +40,8 @@ app.use('/api/v1', v1ApiRoutes); // All API routes will be prefixed with /api/v1
 
 
 // TODO: Mount main API routes v1
-// const v1Routes = require('./routes'); // Renaming for clarity
-// app.use('/api/v1', v1Routes);
+const v1Routes = require('./routes'); // Renaming for clarity
+app.use('/api/v1', v1Routes);
 
 // Handle 404 Not Found for any other route AFTER actual routes
 // IMPORTANT: This 404 handler must come BEFORE the global error handlers
